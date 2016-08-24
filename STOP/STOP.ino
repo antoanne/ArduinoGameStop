@@ -6,12 +6,18 @@ const int ledPinE =  13;
 
 const int buttonPin = 2;
 
-int currentLed = 0;
+int currentLed = 3;
 int currentDelay = 1000;
+int points = 0;
+
+int inc = 1;
+
+long lastBlink = millis();
 
 bool playing = true;
 
 void setup() {
+  Serial.begin(9600);
   pinMode(ledPinA, OUTPUT);
   pinMode(ledPinB, OUTPUT);
   pinMode(ledPinC, OUTPUT);
@@ -19,7 +25,7 @@ void setup() {
   pinMode(ledPinE, OUTPUT);
 
   pinMode(buttonPin, INPUT);
-  attachInterrupt(0,test,RISING);
+  attachInterrupt(0, test, RISING);
 }
 
 void loop() {
@@ -29,29 +35,32 @@ void loop() {
 }
 
 void onNext(){
-  delay(currentDelay);
   offAll();
   switch(currentLed) {
-    case 0:
+    case 1:
       digitalWrite(ledPinA, HIGH);
       break;
-    case 1:
+    case 2:
       digitalWrite(ledPinB, HIGH);
       break;
-    case 2:
+    case 3:
       digitalWrite(ledPinC, HIGH);
       break;
-    case 3:
+    case 4:
       digitalWrite(ledPinD, HIGH);
       break;
     default:
       digitalWrite(ledPinE, HIGH);
       break;
   }
-  currentLed++;
-  if(currentLed > 4){
-    currentLed = 0;
+  delay(currentDelay);
+  
+  if(currentLed >= 5){
+    inc = -1;
+  } else if (currentLed <= 1) {
+    inc = 1;
   }
+  currentLed += inc;
 }
 
 void offAll(){
@@ -71,30 +80,71 @@ void onAll(){
 }
 
 void test() {
-  if(currentLed == 3) {
-    hit();
-  } else {
-    miss();
+  if ( millis() - lastBlink > 1000) {
+    lastBlink = millis();
+    if(currentLed == 3) {
+      hit();
+    } else {
+      miss();
+    }
   }
 }
 
 void hit() {
   playing = false;
   delay(3000);
-  offAll();
+  splash();
   delay(1000);
-  playing = true;
   currentDelay = currentDelay * 0.95;
+  points++;
+  playing = true;
+  Serial.print(points);
+  Serial.println(" points");
 }
 
 void miss() {
   playing = false;
-  onAll();
-  delay(3000);
-  offAll();
-  delay(1000);
-  currentLed = 0;
-  playing = true;
+  wrong();
+  currentLed = 2;
+  inc = 1;
   currentDelay = 1000;
+  points = 0;
+  playing = true;
+  Serial.println("=============");
+  Serial.println("  YOU LOSE!  ");
+  Serial.println("=============");
+}
+
+void splash() {
+  offAll();
+  digitalWrite(ledPinC, HIGH);
+  delay(10000);
+  digitalWrite(ledPinB, HIGH);
+  digitalWrite(ledPinD, HIGH);
+  delay(10000);
+  digitalWrite(ledPinA, HIGH);
+  digitalWrite(ledPinE, HIGH);
+  delay(10000);
+  digitalWrite(ledPinA, LOW);
+  digitalWrite(ledPinE, LOW);
+  delay(10000);
+  digitalWrite(ledPinB, LOW);
+  digitalWrite(ledPinD, LOW);
+  delay(10000);
+  digitalWrite(ledPinC, HIGH);
+}
+
+void wrong() {
+  onAll();
+  delay(30000);
+  offAll();
+  delay(20000);
+  onAll();  
+  delay(20000);
+  offAll();
+  delay(10000);
+  onAll();  
+  delay(10000);
+  offAll();
 }
 

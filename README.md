@@ -10,3 +10,5 @@ O objetivo deste projeto é mostrar uma forma diferenciada de pensar na utiliza�
 Convido você a participar, dando continuidade neste projeto com a recriação de outros games, talvez até mais elaborados e com recursos presente em laboratórios “maker”.
 
 ![alt tag](https://github.com/antoanne/ArduinoGameStop/blob/master/Esquema.png)
+
+<p align="center"><a href="https://www.youtube.com/watch?v=v5HUCx9ctgk" target="_blank"><img src="http://img.youtube.com/vi/v5HUCx9ctgk/0.jpg" /></a></p>
